@@ -39,15 +39,15 @@ public class CompletableFutureDemo {
         System.out.println("耗时：" + (Instant.now().getEpochSecond() - start) + "秒");
     }*/
 
-/*        //2. 纯异步，没有返回值的异步
+        //2. 纯异步，没有返回值的异步
         public static void main(String[] args) throws ExecutionException, InterruptedException {
-            //默认使用的线程池是ForkJoinPool的ForkJoinPool.commonPool() 在整个JVM中是唯一的
-            //CompletableFuture.runAsync(CompletableFutureDemo::doC);
-            //手动指定在自定义线程池
-            CompletableFuture<Void> voidCompletableFuture = CompletableFuture.runAsync(CompletableFutureDemo::doC, POOL_EXECUTOR);
+            //默认使用的线程池是ForkJoinPool的ForkJoinPool.commonPool() 在整个JVM中是唯一的【守护线程 daemon=true】，这种情况在main退出后就没有其他用户线程了，所以程序在completableFuture.get()执行后会停止
+            //CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(CompletableFutureDemo::doC);
+            //手动指定在自定义线程池，这种情况在main退出后就没有其他用户线程了，由于还有POOL_EXECUTOR中的某个用户线程，所以程序在completableFuture.get()执行后不会停止
+            CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(CompletableFutureDemo::doC, POOL_EXECUTOR);
             //获取到的打印出来是null
-            System.out.println(voidCompletableFuture.get());
-        }*/
+            System.out.println(completableFuture.get());
+        }
 
 
 /*     //3. 有返回值的异步
