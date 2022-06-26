@@ -3,13 +3,10 @@ package com.linx.restart.java异步编程实战.第3章;
 import com.linx.restart.utils.RSAUtils;
 import com.linx.restart.utils.SleepUtil;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * completableFuture demo
@@ -107,17 +104,18 @@ public class CompletableFutureDemo {
         System.out.println(Instant.now().toEpochMilli() - start);
 
     }*/
-
-    //7. whenComplete
+/*
+    //7. whenComplete,第一个异步任务执行完后执行第二个任务，第二个任务的依赖第一个任务的执行结果
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         //加密id
         String encryptId = "TeNivJpS3T/XeqRGWRVI0n1vsF9rhpSaFe0AIRStM6u/6fJi6DhGYF8i+XJmGCvqtIQnrmm81VUunIHxcfhkh88lK0kTSP76HiWUyJblaqlKlGNiFDDxflF1LL34TeoebImSd9662n17q9D/P9rAZz13wxlfNytNsX8nJFFo/QE=";
         //私钥
         String privatekey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJ8+I7KUwBukeaBuPtV3svrQn6fNQnYdY7dsk5creS9o8+jDRAPcRoPsyEZs3Q0P8xdU6HHoJMBEFMI1FuG+whzphEmAJh2v32hSETYE+lFsyzSq6LSV0+0+sbY6pzWzqFRdWmHU1RN1mMPdXx03bQYWWQW0Y5oU4YIYFAWoEgK7AgMBAAECgYAOLs2lISR/EcYXaNpFzvRs7Fnb6ycpN/LiqlP22dNgSpu2tnV/VoYdR+CKjTWe7TW8dT6CrqdfTHEA3xObpY7KOmy98VN5uVuR0ZWmqymil/mUGobrzpZidmi6jNfbIaHpzOgqu89UN/AFZ/qALs877cl67GmCX+QyciQ45IJV2QJBANOdCntujWKp66lI4eFRg1+qKWFDyK936WNtsckGkb42hYOpOT0aPito1HmejMxes0JkVr3fZxVOWY3FPMXQliUCQQDApPXcLHy/iMQNuS++xbfVEiD+KcwJWY6LhfAcybyV62hcnCqRPG7IF+38eGkQVsnm4nN+++W/H0U1abZMu69fAkAiQJkhwZNBFSAAFrv5LKiHI5PvGnmxbUdpwKe2Uknk8A5McWfCbC0D+cPqq68+pVV+uZ8QvMiCulvkhrh/jHPBAkAW5gTLbQZPBgS31OFV/c6CJyuAypsUKW8GKp+F7HzcHSVEjNOKe/J3GlERh4aFiKtrJFOyLmL6us7RMIWYzV5lAkA+n1KQA0Ez2JwFFrRRM+YZ7Y0+yuak2DfKb+4tKKLS11nuS4uTKdgxtgDD6ybzeY6dqT60fVPbhCsoE4AuN9gP";
-
+        long start = Instant.now().toEpochMilli();
         CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
             String decryptId = null;
             try {
+                SleepUtil.sleep(1);
                 System.out.println("encryptId=" + encryptId);
                 decryptId = RSAUtils.decryptByPrivateKey(encryptId, RSAUtils.getPrivateKey(privatekey));
             } catch (Exception e) {
@@ -126,25 +124,144 @@ public class CompletableFutureDemo {
             return decryptId;
         });
         CompletableFuture<String> objectCompletableFuture = completableFuture.thenCompose(decryptId -> CompletableFuture.supplyAsync(() -> {
+            SleepUtil.sleep(2);
             System.out.println("decryptId=" + decryptId);
             System.out.println("执行findById(" + decryptId + ")");
             System.out.println("查询结果为：" + decryptId + ":findById(decryptId)");
             return decryptId + ":findById(decryptId)";
         }));
         System.out.println(objectCompletableFuture.get());
-    }
+        System.out.println(Instant.now().toEpochMilli() - start);
+        //打印耗时大概3秒多一点，耗时等于两个异步任务耗时的和，说明两个任务是限执行第一个完成后再执行第二个
+    }*/
+
+    /*//8. 使用whenComplete实现将两个异步任务的执行结果作为参数再执行一个异步任务
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        long start = Instant.now().toEpochMilli();
+        //task-a和task-b是并发执行的
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
+            SleepUtil.sleep(2);
+            System.out.println("task-a");
+            return "task-a";
+        }).thenCombine(CompletableFuture.supplyAsync(() -> {
+            SleepUtil.sleep(3);
+            System.out.println("task-b");
+            return "task-b";
+        }), (oneResult, twoResult) -> {
+            SleepUtil.sleep(1);
+            System.out.println("task-compose");
+            //System.out.println("compose[" + oneResult + "," + twoResult + "]");
+            return "compose[" + oneResult + "," + twoResult + "]";
+        });
+        System.out.println(completableFuture.get());
+        System.out.println(Instant.now().toEpochMilli() - start);
+        //耗时大概4秒，耗时=max(task-a,task-b)+task-compose,
+    }*/
+/*
+    //9. allOf实现等待多个并发的completableFuture任务执行完毕
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        long start = Instant.now().toEpochMilli();
+        //转换多个CompletableFuture为一个CompletableFuture
+        CompletableFuture<Void> result = CompletableFuture.allOf(CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(1);
+                    System.out.println("task-a");
+                    return "task-a";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(2);
+                    System.out.println("task-b");
+                    return "task-b";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(3);
+                    System.out.println("task-c");
+                    return "task-c";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(4);
+                    System.out.println("task-d");
+                    return "task-d";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(5);
+                    System.out.println("task-e");
+                    return "task-e";
+                }));
+        System.out.println(result.get());
+        System.out.println(Instant.now().toEpochMilli() - start);
+        //耗时大概5秒，说明上面所以的任务都是异步执行的，耗时=max(task-a，task-b，task-c,task-d,task-e)
+    }*/
+/*
+    //9. anyOf实现等待多个并发的completableFuture任务只要有任意一个完成就返回
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        long start = Instant.now().toEpochMilli();
+        //转换多个CompletableFuture为一个CompletableFuture
+        CompletableFuture<Object> result = CompletableFuture.anyOf(CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(1);
+                    System.out.println("task-a");
+                    return "task-a";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(2);
+                    System.out.println("task-b");
+                    return "task-b";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(3);
+                    System.out.println("task-c");
+                    return "task-c";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(4);
+                    System.out.println("task-d");
+                    return "task-d";
+                }),
+                CompletableFuture.supplyAsync(() -> {
+                    SleepUtil.sleep(5);
+                    System.out.println("task-e");
+                    return "task-e";
+                }));
+        System.out.println(result.get());
+        System.out.println(Instant.now().toEpochMilli() - start);
+        //耗时大概1秒，耗时=min(task-a，task-b，task-c,task-d,task-e)，注意，这里的a到e的所以任务也都是异步的
+    }*/
+
+/*
+    //10. completeExceptionally对于抛出异常的处理
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CompletableFuture<String> completableFuture = new CompletableFuture<>();
+        new Thread(() -> {
+            SleepUtil.sleep(1);
+            try {
+                //[0,10)的随机数
+                int number = new Random().nextInt(10);
+                System.out.println(number);
+                if (number > 4) {
+                    throw new RuntimeException("随机数不能大于4");
+                }
+                completableFuture.complete("ok");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                //设置异常给completableFuture内部，这样下面的completableFuture.get()就会抛出异常后终止，而不是一直阻塞等待
+                completableFuture.completeExceptionally(e);
+            }
+        }, "thread-a").start();
+        //这里阻塞等待completableFuture执行完成，但是上面的随机数如果是大于5的时候抛出异常后completableFuture.complete("ok")就不会被执行，这会导致这里一直阻塞
+        //对于这类情况，提供了completeExceptionally将异常设置给completableFuture内部，这样下面的completableFuture.get()就会抛出异常后终止，而不是一直阻塞等待
+        System.out.println(completableFuture.get());
+    }*/
 
 
     private static String doA() {
         System.out.println("doA start");
-        SleepUtil.seelp(3);
+        SleepUtil.sleep(3);
         System.out.println("doA end");
         return "doA sleep 3 seconds";
     }
 
     private static void doB(String event) {
         System.out.println("doB start");
-        SleepUtil.seelp(1);
+        SleepUtil.sleep(1);
         System.out.println("doB end");
         System.out.println(event + " 在 " + "doB sleep 1 seconds 之前");
     }
@@ -152,27 +269,27 @@ public class CompletableFutureDemo {
 
     private static String doB() {
         System.out.println("doB start");
-        SleepUtil.seelp(1);
+        SleepUtil.sleep(1);
         System.out.println("doB end");
         return "doB sleep 1 seconds";
     }
 
     private static void doC() {
         System.out.println("doC start");
-        SleepUtil.seelp(2);
+        SleepUtil.sleep(2);
         System.out.println("doC end");
     }
 
     private static String doD(String event) {
         System.out.println("doD start");
-        SleepUtil.seelp(1);
+        SleepUtil.sleep(1);
         System.out.println("doD end");
         return event + " 在 " + "doB sleep 1 seconds 之前";
     }
 
     private static String doE(String event) {
         System.out.println("doE start");
-        SleepUtil.seelp(2);
+        SleepUtil.sleep(2);
         System.out.println("doE end");
         return event + " 在 " + "doB sleep 1 seconds 之前";
     }

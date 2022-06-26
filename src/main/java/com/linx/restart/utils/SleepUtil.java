@@ -7,7 +7,7 @@ package com.linx.restart.utils;
  * @since 2022/6/22 下午11:11
  */
 public class SleepUtil {
-    public static void seelp(long millis) {
+    public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -15,7 +15,7 @@ public class SleepUtil {
         }
     }
 
-    public static void seelp(int seconds) {
+    public static void sleep(int seconds) {
         try {
             Thread.sleep(seconds * 1000L);
         } catch (InterruptedException e) {

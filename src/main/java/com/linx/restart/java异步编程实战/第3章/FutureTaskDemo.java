@@ -41,13 +41,13 @@ public class FutureTaskDemo {
     }
 
     private static String doA(int seconds) {
-        SleepUtil.seelp(seconds);
+        SleepUtil.sleep(seconds);
         System.out.println("doA");
         return "doA";
     }
 
     private static String doB(int seconds) {
-        SleepUtil.seelp(seconds);
+        SleepUtil.sleep(seconds);
         System.out.println("doB");
         return "doB";
     }

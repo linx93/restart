@@ -1,7 +1,6 @@
 package com.linx.restart.java异步编程实战.第2章;
 
 import com.linx.restart.utils.SleepUtil;
-import org.springframework.scheduling.concurrent.DefaultManagedAwareThreadFactory;
 
 import java.time.Instant;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -50,13 +49,13 @@ public class 显示使用线程池实现异步编程 {
     }
 
     public static String doSomethingA() {
-        SleepUtil.seelp(4);
+        SleepUtil.sleep(4);
         System.out.println("exec doSomethingA  1 seconds");
         return " exec doSomethingA  4 seconds";
     }
 
     public static String doSomethingB() {
-        SleepUtil.seelp(2);
+        SleepUtil.sleep(2);
         System.out.println("exec doSomethingB  2 seconds");
         return "exec doSomethingB  2 seconds";
     }
