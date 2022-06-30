@@ -6,7 +6,6 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Reactor的demo
@@ -36,6 +35,8 @@ public class Reactor {
         System.out.println("耗时：" + (Instant.now().toEpochMilli() - start));
         Thread.currentThread().join();
     }
+
+    //总结：reactor和Rxjava其实很相似的，使用基本相似，后续的webFlux就是基于reactor构建的
 
 
     public static class Person {
