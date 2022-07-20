@@ -50,7 +50,6 @@
         </dependency>
 
 
-
         <!-- webFlux start-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -68,7 +67,29 @@
             <scope>test</scope>
         </dependency>
         <!-- webFlux end-->
+
+        <!--linx common-->
+        <dependency>
+            <groupId>com.linx</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <!--linx的maven私服配置-->
+        <repository>
+            <id>maven-public</id>
+            <name>maven-public</name>
+            <url>http://xionglin.site:8081/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
