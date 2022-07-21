@@ -26,7 +26,7 @@
 ### 第八章 高性能异步编程框架中间件
 #### 基于事件驱动的网络编程框架--Netty
 1. rpcClient
-2. rpcserver
+2. rpcServer
 3. test
 4. Netty概述.md
 5. Netty的半包和粘包.md
